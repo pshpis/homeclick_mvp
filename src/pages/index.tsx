@@ -8,7 +8,7 @@ import {strToFloat} from "@/lib/validation";
 export type Props = {
   locale: string,
   cities: Array<any>,
-  translations: cities_translations[]
+  translations: cities_translations[],
 }
 
 export default function Home(props: Props) {
