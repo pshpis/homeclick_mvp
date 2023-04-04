@@ -7,7 +7,6 @@ export interface DevelopersListText {
 }
 
 
-
 export const developersTextChoice: TextChoice<DevelopersListText> = {
     'en': {
         title: 'Choise your developer in',

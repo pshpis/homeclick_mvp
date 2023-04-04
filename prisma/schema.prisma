@@ -12,7 +12,7 @@ model areas {
   created_at                                      DateTime              @default(now()) @db.Timestamp(6)
   updated_at                                      DateTime              @default(now()) @db.Timestamp(6)
   median_price_3_months_mom_pct                   Decimal?              @db.Decimal(15, 5)
-  median_price_3_months_pct                       Decimal?              @db.Decimal(15, 5)
+  median_price_3_months                           Decimal?              @db.Decimal(15, 5)
   median_price_per_sqft_3_months                  Int?
   median_price_per_sqft_3_months_mom_pct          Decimal?              @db.Decimal(15, 5)
   roi_stat_rent                                   Int?
@@ -38,6 +38,7 @@ model areas {
   areas_translations                              areas_translations[]
   mall_areas                                      mall_areas[]
   metro_station_areas                             metro_station_areas[]
+  projects                                        projects[]
 }
 
 model areas_files {
@@ -62,7 +63,7 @@ model areas_translations {
 model cities {
   id                                     Int                   @id @default(autoincrement())
   median_price_3_months_mom_pct          Decimal?              @db.Decimal(15, 5)
-  median_price_3_months_pct              Decimal?              @db.Decimal(15, 5)
+  median_price_3_months                  Decimal?              @db.Decimal(15, 5)
   median_price_per_sqft_3_months         Int?
   median_price_per_sqft_3_months_mom_pct Decimal?              @db.Decimal(15, 5)
   roi_stat_rent                          Int?
@@ -118,7 +119,7 @@ model developers {
   dl_license_number                      Int?
   dl_registration_date                   DateTime?                 @db.Timestamp(6)
   median_price_3_months_mom_pct          Decimal?                  @db.Decimal(15, 5)
-  median_price_3_months_pct              Decimal?                  @db.Decimal(15, 5)
+  median_price_3_months                  Decimal?                  @db.Decimal(15, 5)
   median_price_per_sqft_3_months         Int?
   median_price_per_sqft_3_months_mom_pct Decimal?                  @db.Decimal(15, 5)
   roi_stat_rent                          Int?
@@ -764,6 +765,10 @@ model projects {
   status                        String                   @default("draft") @db.VarChar(255)
   position                      Unsupported("geometry")?
   photo                         String?                  @db.Uuid
+  area_id                       Int?
+  has_childrens_playground      Boolean?
+  has_gym                       Boolean?
+  roi_stat_rent_years           Int?
   floor_plans                   floor_plans[]
   inspections                   inspections[]
   project_malls                 project_malls[]
@@ -773,6 +778,7 @@ model projects {
   developers                    developers               @relation(fields: [developer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_projects_developers")
   projects                      projects?                @relation("projectsToprojects", fields: [master_project_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_projects_projects")
   other_projects                projects[]               @relation("projectsToprojects")
+  areas                         areas?                   @relation(fields: [area_id], references: [id], onUpdate: NoAction, map: "projects_area_id_foreign")
   directus_files                directus_files?          @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "projects_photo_foreign")
   projects_files                projects_files[]
   projects_translations         projects_translations[]
@@ -810,7 +816,7 @@ model properties {
   is_townhouse      Boolean?
   parking           String?
   parking_count     Int?
-  property_type     String?            @db.VarChar(8)
+  property_type     String?            @db.VarChar(16)
   room_type         String?            @db.VarChar(16)
   sea_view          String?            @db.VarChar(8)
   unit_area_sqft    Decimal?           @db.Decimal(15, 5)

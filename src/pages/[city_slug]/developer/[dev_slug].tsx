@@ -1,4 +1,3 @@
-import {cities, developers} from "@prisma/client";
 import {prisma} from "@/lib/prisma";
 import {strToFloat} from "@/lib/validation";
 import {Center, Heading} from "@chakra-ui/react";
@@ -7,7 +6,7 @@ import {ProjectsListText, projectTextChoice} from "@/components/ProjectsList/Pro
 import TextChoice from "@/lib/translation";
 import {ProjectsList} from "@/components/ProjectsList/ProjectsList";
 
-export default function Home({dev, locale}: any) {
+export default function Home({dev, locale, city_slug}: any) {
     const text: ProjectsListText = projectTextChoice[locale as keyof TextChoice<ProjectsListText>]
     return <>
         <Center>
@@ -15,18 +14,23 @@ export default function Home({dev, locale}: any) {
                 {text.title}
             </Heading>
         </Center>
-        <ProjectsList projects={dev.projects} locale={locale} text={text}/>
+        <ProjectsList city_slug={city_slug} projects={dev.projects} locale={locale} text={text}/>
     </>
 }
 
-export async function getStaticPaths(context: any){
-    const _developers: developers[] = await prisma.developers.findMany();
+export async function getStaticPaths(context: any) {
+    const _developers = await prisma.developers.findMany({
+        include: {
+            cities: true,
+        }
+    });
     const needPaths: Array<any> = [];
 
     context.locales.forEach((l: string) => {
         const localPaths = _developers.map((dev) => {
             return {
                 params: {
+                    city_slug: dev.cities.slug,
                     dev_slug: dev.slug,
                 },
                 locale: l,
@@ -41,7 +45,7 @@ export async function getStaticPaths(context: any){
     }
 }
 
-export async function getStaticProps(context: any){
+export async function getStaticProps(context: any) {
     const dev_slug = context.params.dev_slug;
     let dev = await prisma.developers.findUnique({
         where: {
@@ -52,7 +56,7 @@ export async function getStaticProps(context: any){
             cities: true,
             projects: {
                 include: {
-                    projects_translations: true
+                    projects_translations: true,
                 },
             },
         }
@@ -65,6 +69,7 @@ export async function getStaticProps(context: any){
         props: {
             locale: context.locale,
             dev: dev,
+            city_slug: context.params.city_slug,
         }
     }
 }

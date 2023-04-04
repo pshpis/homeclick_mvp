@@ -1,10 +1,9 @@
-export function strToFloat(obj: any){
+export function strToFloat(obj: any) {
     let keys: Array<any> = [];
     try {
         keys = Object.keys(obj);
-    }
-    catch (e) {
-        console.log(e)
+    } catch (e) {
+        // console.log(e)
     }
 
     keys.forEach(key => {
@@ -12,13 +11,13 @@ export function strToFloat(obj: any){
             obj[key] = parseFloat(obj[key]);
             return;
         }
-        if (Array.isArray(obj[key])){
+        if (Array.isArray(obj[key])) {
             obj[key] = obj[key].map((o: any) => {
                 return strToFloat(o);
             });
             return;
         }
-        if (typeof obj[key] == "object"){
+        if (typeof obj[key] == "object") {
             obj[key] = strToFloat(obj[key]);
             return;
         }

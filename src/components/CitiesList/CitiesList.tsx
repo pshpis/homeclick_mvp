@@ -1,30 +1,18 @@
 import TextChoice from "@/lib/translation";
 import {HomeText, homeTextChoice} from "@/components/CitiesList/CitiesListsText";
-import {
-    Center,
-    Heading,
-    SimpleGrid,
-    Card,
-    CardHeader,
-    CardBody,
-    Text,
-    Divider,
-    CardFooter,
-    Link
-} from "@chakra-ui/react";
+import {Card, CardBody, CardFooter, CardHeader, Center, Divider, Heading, Link, SimpleGrid} from "@chakra-ui/react";
 import React from "react";
 import {Props} from "@/pages";
 
-function CityCard({cityObj, text, slug, locale} : any) {
+function CityCard({cityObj, text, slug, locale}: any) {
     return (
         <Card>
             <CardHeader>
                 <Heading size='md'>{cityObj.name}</Heading>
             </CardHeader>
             <CardBody>
-                <Text>
-                    {cityObj.description}
-                </Text>
+                <div dangerouslySetInnerHTML={{__html: cityObj.description}}>
+                </div>
             </CardBody>
             <Divider/>
             <CardFooter>
@@ -33,7 +21,8 @@ function CityCard({cityObj, text, slug, locale} : any) {
         </Card>
     );
 }
-export function CitiesList({locale, cities, translations} : Props) {
+
+export function CitiesList({locale, cities, translations}: Props) {
     const text: HomeText = homeTextChoice[locale as keyof TextChoice<HomeText>];
 
     return <>

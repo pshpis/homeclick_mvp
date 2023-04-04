@@ -8,7 +8,7 @@ import {DevelopersListText, developersTextChoice} from "@/components/DevelopersL
 import TextChoice from "@/lib/translation";
 
 
-export default function Home({locale, city} : any ) {
+export default function Home({locale, city}: any) {
     const translation = city.cities_translations.filter((t: any) => {
         return t.languages_code == locale;
     })[0];
@@ -26,13 +26,13 @@ export default function Home({locale, city} : any ) {
 }
 
 export async function getStaticPaths(context: any) {
-    const _cities : cities[] = await prisma.cities.findMany();
+    const _cities: cities[] = await prisma.cities.findMany();
     const needPaths: Array<any> = [];
     context.locales.forEach((l: string) => {
         const localPaths = _cities.map((c) => {
             return {
                 params: {
-                    city: c.slug,
+                    city_slug: c.slug,
                 },
                 locale: l,
             }
@@ -48,9 +48,9 @@ export async function getStaticPaths(context: any) {
     }
 }
 
-export async function getStaticProps(context: any){
+export async function getStaticProps(context: any) {
     console.log(context);
-    const city_slug = context.params.city;
+    const city_slug = context.params.city_slug;
     let city = await prisma.cities.findUnique({
         where: {
             slug: city_slug,
@@ -60,6 +60,7 @@ export async function getStaticProps(context: any){
             developers: {
                 include: {
                     developers_translations: true,
+                    cities: true,
                 }
             },
             areas: true,
