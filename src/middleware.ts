@@ -11,8 +11,10 @@ export async function middleware(req: NextRequest) {
         return;
     }
 
+    console.log(req);
+
     if (req.nextUrl.locale === 'en') {
-        console.log(req);
+
         return;
         // return NextResponse.redirect(
         //     new URL(`${req.nextUrl.pathname}${req.nextUrl.search}`, req.url)
