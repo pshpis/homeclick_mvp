@@ -14,7 +14,7 @@ export default function Home({dev, locale, city_slug}: any) {
                 {text.title}
             </Heading>
         </Center>
-        <ProjectsList city_slug={city_slug} projects={dev.projects} locale={locale} text={text}/>
+        <ProjectsList city_slug={city_slug} projects={dev.projects} locale={locale}/>
     </>
 }
 
@@ -63,7 +63,6 @@ export async function getStaticProps(context: any) {
     });
 
     dev = strToFloat(JSON.parse(JSON.stringify(dev)));
-    console.log(dev);
 
     return {
         props: {

@@ -1,6 +1,7 @@
 import {Card, CardBody, CardFooter, CardHeader, Divider, Heading, Link, SimpleGrid, Text} from "@chakra-ui/react";
 import React from "react";
-import {ProjectsListText} from "@/components/ProjectsList/ProjectsListText";
+import {ProjectsListText, projectTextChoice} from "@/components/ProjectsList/ProjectsListText";
+import TextChoice from "@/lib/translation";
 
 function ProjectCard({
                          project,
@@ -8,7 +9,7 @@ function ProjectCard({
                          text,
                          city_slug
                      }: { project: any, locale: string, text: ProjectsListText, city_slug: string }) {
-    console.log(project);
+
     const translation = project.projects_translations.filter((t: any) => {
         return t.languages_code == locale;
     })[0];
@@ -33,10 +34,9 @@ function ProjectCard({
 export function ProjectsList({
                                  projects,
                                  locale,
-                                 text,
                                  city_slug
-                             }: { projects: Array<any>, locale: string, text: ProjectsListText, city_slug: string }) {
-    console.log(projects);
+                             }: { projects: Array<any>, locale: string, city_slug: string }) {
+    const text = projectTextChoice[locale as keyof TextChoice<ProjectsListText>]
     return <>
         <SimpleGrid minChildWidth="300px" spacing={10} padding="0 10px" m="20px 0">
             {

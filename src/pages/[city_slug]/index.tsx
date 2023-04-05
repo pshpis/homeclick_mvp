@@ -1,28 +1,61 @@
 import {cities} from "@prisma/client";
 import {prisma} from "@/lib/prisma";
 import {strToFloat} from "@/lib/validation";
-import {DevelopersList} from "@/components/DevelopersList/DevelopersList";
-import {Center, Heading} from "@chakra-ui/react";
-import React from "react";
-import {DevelopersListText, developersTextChoice} from "@/components/DevelopersList/DevelopersListText";
+import {Box, Button, Center, Divider, Heading, HStack, Link, VStack} from "@chakra-ui/react";
+import ReactMarkdown from "react-markdown";
 import TextChoice from "@/lib/translation";
+import {AreasList} from "@/components/AreasList/AreasList";
+import React from "react";
 
+interface CityHubText {
+    viewDevelopers: string,
+    areas: string,
+    viewProjects: string,
+    waterfront: string,
+}
 
-export default function Home({locale, city}: any) {
+const cityHubTextChoice: TextChoice<CityHubText> = {
+    ru: {
+        viewDevelopers: 'Посмотреть всех застройщиков',
+        areas: 'Выберите подходящий район в ',
+        viewProjects: 'Посмотреть все проекты',
+        waterfront: 'Посмотреть объекты на берегу моря'
+    },
+    en: {
+        viewDevelopers: 'View all developers',
+        areas: 'Choose your perfect area in ',
+        viewProjects: 'View all projects',
+        waterfront: 'View all waterfront properties',
+    }
+}
+
+export default function Home({city, locale}: { city: any, locale: string }) {
     const translation = city.cities_translations.filter((t: any) => {
         return t.languages_code == locale;
     })[0];
+    const text = cityHubTextChoice[locale as keyof TextChoice<CityHubText>];
 
-    const text: DevelopersListText = developersTextChoice[locale as keyof TextChoice<DevelopersListText>];
+    return <Center as={VStack}>
+        <Heading padding="10px 0">{translation.name}</Heading>
+        <Box maxWidth="800px" padding="0 10px">
+            <ReactMarkdown>{translation.description}</ReactMarkdown>
+        </Box>
+        <HStack mt={"30px"} spacing="30px">
+            <Link href={`/${locale}/${city.slug}/developers`} textDecoration="none">
+                <Button colorScheme="blue">{text.viewDevelopers}</Button>
+            </Link>
+            <Link href={`/${locale}/${city.slug}/projects`} textDecoration="none">
+                <Button colorScheme="blue">{text.viewProjects}</Button>
+            </Link>
+            <Link href={`/${locale}/${city.slug}/waterfront-property`} textDecoration="none">
+                <Button colorScheme="blue">{text.waterfront}</Button>
+            </Link>
+        </HStack>
 
-    return <>
-        <Center>
-            <Heading p="20px 0">
-                {text.title + " " + translation.name_in}
-            </Heading>
-        </Center>
-        <DevelopersList developers={city.developers} locale={locale} text={text}></DevelopersList>
-    </>
+        <Divider borderColor="black"/>
+        <Heading padding="10px 0">{text.areas} {translation.name_in}</Heading>
+        <AreasList _areas={city.areas} locale={locale} city_slug={city.slug}/>
+    </Center>
 }
 
 export async function getStaticPaths(context: any) {
@@ -40,8 +73,6 @@ export async function getStaticPaths(context: any) {
         needPaths.push(...localPaths);
     });
 
-    console.log(needPaths);
-
     return {
         paths: needPaths,
         fallback: false, // can also be true or 'blocking'
@@ -49,7 +80,6 @@ export async function getStaticPaths(context: any) {
 }
 
 export async function getStaticProps(context: any) {
-    console.log(context);
     const city_slug = context.params.city_slug;
     let city = await prisma.cities.findUnique({
         where: {
@@ -63,7 +93,11 @@ export async function getStaticProps(context: any) {
                     cities: true,
                 }
             },
-            areas: true,
+            areas: {
+                include: {
+                    areas_translations: true,
+                }
+            },
             metro_stations: true,
             malls: true,
         }

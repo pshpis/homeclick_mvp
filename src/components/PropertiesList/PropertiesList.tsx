@@ -1,6 +1,7 @@
 import {Card, CardBody, CardFooter, CardHeader, Divider, Heading, Link, SimpleGrid, Text} from "@chakra-ui/react";
 import React from "react";
-import {PropertiesListText} from "@/components/PropertiesList/PropertiesListText";
+import {PropertiesListText, propertiesTextChoice} from "@/components/PropertiesList/PropertiesListText";
+import TextChoice from "@/lib/translation";
 
 function PropertyCard({
                           property,
@@ -8,7 +9,6 @@ function PropertyCard({
                           text,
                           city_slug
                       }: { property: any, locale: string, text: PropertiesListText, city_slug: string }) {
-    console.log(property);
     const slug = `${property.property_type}-in-${property.projects.slug}-${property.id}`;
     return <Card>
         <CardHeader>
@@ -31,9 +31,9 @@ function PropertyCard({
 export function PropertiesList({
                                    properties,
                                    locale,
-                                   text,
                                    city_slug
-                               }: { properties: Array<any>, locale: string, text: PropertiesListText, city_slug: string }) {
+                               }: { properties: Array<any>, locale: string, city_slug: string }) {
+    const text: PropertiesListText = propertiesTextChoice[locale as keyof TextChoice<PropertiesListText>]
     return <>
         <SimpleGrid minChildWidth="300px" spacing={10} padding="0 10px" m="20px 0">
             {

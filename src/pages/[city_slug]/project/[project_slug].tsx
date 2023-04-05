@@ -14,7 +14,7 @@ export default function Home({project, locale, city_slug}: any) {
                 {text.title} {project.name}
             </Heading>
         </Center>
-        <PropertiesList properties={project.properties} locale={locale} text={text} city_slug={city_slug}/>
+        <PropertiesList properties={project.properties} locale={locale} city_slug={city_slug}/>
     </>
 }
 
