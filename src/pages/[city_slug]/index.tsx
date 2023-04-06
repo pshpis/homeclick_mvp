@@ -1,11 +1,12 @@
 import {cities} from "@prisma/client";
 import {prisma} from "@/lib/prisma";
 import {strToFloat} from "@/lib/validation";
-import {Box, Button, Center, Divider, Heading, HStack, Input, Link, Select, VStack} from "@chakra-ui/react";
+import {Box, Button, Center, Divider, Heading, HStack, Input, Link, Select, useToast, VStack} from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 import TextChoice from "@/lib/translation";
 import {AreasList} from "@/components/AreasList/AreasList";
-import React from "react";
+import React, {useCallback, useState} from "react";
+import {useRouter} from "next/router";
 
 interface CityHubText {
     viewDevelopers: string,
@@ -20,6 +21,7 @@ interface CityHubText {
     secondFilter: string,
     minPrice: string,
     maxPrice: string,
+    filterError: string,
 
 }
 
@@ -37,6 +39,7 @@ const cityHubTextChoice: TextChoice<CityHubText> = {
         secondFilter: 'Отберите подходящие по цене',
         minPrice: 'Цена от',
         maxPrice: 'Цена до',
+        filterError: 'Заполните все поля',
     },
     en: {
         viewDevelopers: 'View all developers',
@@ -51,6 +54,7 @@ const cityHubTextChoice: TextChoice<CityHubText> = {
         secondFilter: 'Filter by price',
         minPrice: 'Min price',
         maxPrice: 'Max price',
+        filterError: 'Please fill every field',
     }
 }
 
@@ -59,6 +63,9 @@ export default function Home({city, locale}: { city: any, locale: string }) {
         return t.languages_code == locale;
     })[0];
     const text = cityHubTextChoice[locale as keyof TextChoice<CityHubText>];
+
+    const router = useRouter();
+    const toast = useToast();
 
     const properties: Array<any> = [];
     city.developers.forEach((dev: any) => {
@@ -79,16 +86,83 @@ export default function Home({city, locale}: { city: any, locale: string }) {
             propertyTypes.push(property.property_type);
     });
 
-    const areasNames: Array<any> = [];
+    const areas: Array<any> = [];
     properties.forEach((property: any) => {
-        const current_area = property.projects.areas;
+        let current_area = property.projects.areas;
         const current_area_translation = current_area.areas_translations.filter((t: any) => {
             return t.languages_code == locale;
         })[0];
 
-        if (areasNames.indexOf(current_area_translation.name) === -1)
-            areasNames.push(current_area_translation.name);
+        if (areas.findIndex((arObj: any) => {
+            return arObj.area.id === current_area.id;
+        }) === -1)
+            areas.push({
+                area: current_area,
+                translation: current_area_translation,
+            });
     });
+
+    const [currentRoomType, setCurrentRoomType] = useState<string>('');
+    const onRoomTypeSelect = useCallback((evt: any) => {
+        setCurrentRoomType(evt.target.value);
+    }, [setCurrentRoomType]);
+
+    const [currentPropertyType, setCurrentPropertyType] = useState<string>('');
+    const onPropertyTypeSelect = useCallback((evt: any) => {
+        setCurrentPropertyType(evt.target.value);
+    }, [setCurrentPropertyType]);
+
+    const [currentAreaSlug, setCurrentAreaSlug] = useState('');
+    const onAreaSelect = useCallback((evt: any) => {
+        setCurrentAreaSlug(evt.target.value);
+    }, [setCurrentAreaSlug]);
+
+
+    const onFirstFilter = useCallback(() => {
+        if (!currentRoomType || !currentPropertyType || !currentAreaSlug) {
+            toast({
+                title: text.filterError,
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+        const answer_url = `/${city.slug}/${currentRoomType}-${currentPropertyType}s-for-sale-in-${currentAreaSlug}`;
+        router.push(answer_url);
+    }, [currentRoomType, currentPropertyType, currentAreaSlug, city, router, toast, text]);
+
+    const [currentPropertyType2, setCurrentPropertyType2] = useState<string>('');
+    const onPropertyTypeSelect2 = useCallback((evt: any) => {
+        setCurrentPropertyType2(evt.target.value);
+    }, [setCurrentPropertyType2]);
+
+    const [minPrice, setMinPrice] = useState<number>(0);
+    const onMinPriceChange = useCallback((evt: any) => {
+        setMinPrice(evt.target.value);
+    }, [setMinPrice]);
+
+    const [maxPrice, setMaxPrice] = useState<number>(0);
+    const onMaxPriceChange = useCallback((evt: any) => {
+        setMaxPrice(evt.target.value);
+    }, [setMaxPrice]);
+
+    const onSecondFilter = useCallback(() => {
+        if (!currentPropertyType2 || !minPrice || !maxPrice){
+            toast({
+                title: text.filterError,
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+        const answer_url = `/${city.slug}/${currentPropertyType2}s?minPrice=${minPrice}&maxPrice=${maxPrice}`;
+        router.push(answer_url);
+    }, [currentPropertyType2, minPrice, maxPrice, router, toast, text, city]);
+
 
     return <Center as={VStack}>
         <Heading padding="10px 0">{translation.name}</Heading>
@@ -115,23 +189,23 @@ export default function Home({city, locale}: { city: any, locale: string }) {
 
         <Heading padding="10px 0">{text.firstFilter}</Heading>
         <HStack maxWidth="700px" padding="10px 0">
-            <Select placeholder={text.selectRoomType}>
+            <Select placeholder={text.selectRoomType} onChange={onRoomTypeSelect}>
                 {roomTypes.map((rt: any, idx: number) => {
                     return <option value={rt + 'br'} key={idx}>{rt + 'br'}</option>;
                 })}
             </Select>
-            <Select placeholder={text.selectPropertyType}>
+            <Select placeholder={text.selectPropertyType} onChange={onPropertyTypeSelect}>
                 {propertyTypes.map((prt: any, idx: number) => {
                     return <option value={prt} key={idx}>{prt}</option>;
                 })}
             </Select>
-            <Select placeholder={text.selectArea}>
-                {areasNames.map((arn: any, idx: number) => {
-                    return <option value={arn} key={idx}>{arn}</option>;
+            <Select placeholder={text.selectArea} onChange={onAreaSelect}>
+                {areas.map((arObj: any, idx: number) => {
+                    return <option value={arObj.area.slug} key={idx}>{arObj.translation.name}</option>;
                 })}
             </Select>
         </HStack>
-        <Button colorScheme="blue">
+        <Button colorScheme="blue" onClick={onFirstFilter}>
             {text.viewSelected}
         </Button>
 
@@ -139,15 +213,15 @@ export default function Home({city, locale}: { city: any, locale: string }) {
 
         <Heading padding="10px 0">{text.secondFilter}</Heading>
         <VStack maxWidth="700px" padding="10px 0">
-            <Select placeholder={text.selectPropertyType}>
+            <Select placeholder={text.selectPropertyType} onChange={onPropertyTypeSelect2}>
                 {propertyTypes.map((prt: any, idx: number) => {
                     return <option value={prt} key={idx}>{prt}</option>;
                 })}
             </Select>
-            <Input type="number" placeholder={text.minPrice}/>
-            <Input type="number" placeholder={text.maxPrice}/>
+            <Input type="number" placeholder={text.minPrice} onChange={onMinPriceChange}/>
+            <Input type="number" placeholder={text.maxPrice} onChange={onMaxPriceChange}/>
         </VStack>
-        <Button colorScheme="blue">
+        <Button colorScheme="blue" onClick={onSecondFilter}>
             {text.viewSelected}
         </Button>
     </Center>
