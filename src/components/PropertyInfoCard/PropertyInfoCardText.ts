@@ -14,7 +14,7 @@ export interface PropertyInfoCardText {
 
 export const propertyInfoCardTextChoice: TextChoice<PropertyInfoCardText> = {
     en: {
-        title: 'Property #',
+        title: 'Property ',
         project: 'In project: ',
         type: 'Type: ',
         roomType: 'Room type: ',
@@ -25,7 +25,7 @@ export const propertyInfoCardTextChoice: TextChoice<PropertyInfoCardText> = {
         no: 'No'
     },
     ru: {
-        title: 'Объект №',
+        title: 'Объект ',
         project: 'В проекте: ',
         type: 'Тип объекта: ',
         roomType: 'Планировка: ',

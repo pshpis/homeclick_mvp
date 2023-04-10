@@ -34,20 +34,11 @@ model areas {
   directus_files                                  directus_files?       @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "areas_photo_foreign")
   directus_users_areas_updated_byTodirectus_users directus_users?       @relation("areas_updated_byTodirectus_users", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "areas_updated_by_foreign")
   cities                                          cities                @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_areas_cities")
-  areas_files                                     areas_files[]
+  areas_photos                                    areas_photos[]
   areas_translations                              areas_translations[]
   mall_areas                                      mall_areas[]
   metro_station_areas                             metro_station_areas[]
   projects                                        projects[]
-}
-
-model areas_files {
-  id                Int             @id @default(autoincrement())
-  areas_id          Int?
-  directus_files_id String?         @db.Uuid
-  sort              Int?
-  areas             areas?          @relation(fields: [areas_id], references: [id], onUpdate: NoAction, map: "areas_files_areas_id_foreign")
-  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "areas_files_directus_files_id_foreign")
 }
 
 model areas_translations {
@@ -82,20 +73,11 @@ model cities {
   photo                                  String?               @db.Uuid
   areas                                  areas[]
   directus_files                         directus_files?       @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "cities_photo_foreign")
-  cities_files                           cities_files[]
+  cities_photos                          cities_photos[]
   cities_translations                    cities_translations[]
   developers                             developers[]
   malls                                  malls[]
   metro_stations                         metro_stations[]
-}
-
-model cities_files {
-  id                Int             @id @default(autoincrement())
-  cities_id         Int?
-  directus_files_id String?         @db.Uuid
-  sort              Int?
-  cities            cities?         @relation(fields: [cities_id], references: [id], onUpdate: NoAction, map: "cities_files_cities_id_foreign")
-  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "cities_files_directus_files_id_foreign")
 }
 
 model cities_translations {
@@ -224,49 +206,50 @@ model directus_fields {
 }
 
 model directus_files {
-  id                                                                    String              @id @db.Uuid
-  storage                                                               String              @db.VarChar(255)
-  filename_disk                                                         String?             @db.VarChar(255)
-  filename_download                                                     String              @db.VarChar(255)
-  title                                                                 String?             @db.VarChar(255)
-  type                                                                  String?             @db.VarChar(255)
-  folder                                                                String?             @db.Uuid
-  uploaded_by                                                           String?             @db.Uuid
-  uploaded_on                                                           DateTime            @default(now()) @db.Timestamptz(6)
-  modified_by                                                           String?             @db.Uuid
-  modified_on                                                           DateTime            @default(now()) @db.Timestamptz(6)
-  charset                                                               String?             @db.VarChar(50)
+  id                                                                    String                   @id @db.Uuid
+  storage                                                               String                   @db.VarChar(255)
+  filename_disk                                                         String?                  @db.VarChar(255)
+  filename_download                                                     String                   @db.VarChar(255)
+  title                                                                 String?                  @db.VarChar(255)
+  type                                                                  String?                  @db.VarChar(255)
+  folder                                                                String?                  @db.Uuid
+  uploaded_by                                                           String?                  @db.Uuid
+  uploaded_on                                                           DateTime                 @default(now()) @db.Timestamptz(6)
+  modified_by                                                           String?                  @db.Uuid
+  modified_on                                                           DateTime                 @default(now()) @db.Timestamptz(6)
+  charset                                                               String?                  @db.VarChar(50)
   filesize                                                              BigInt?
   width                                                                 Int?
   height                                                                Int?
   duration                                                              Int?
-  embed                                                                 String?             @db.VarChar(200)
+  embed                                                                 String?                  @db.VarChar(200)
   description                                                           String?
   location                                                              String?
   tags                                                                  String?
-  metadata                                                              Json?               @db.Json
+  metadata                                                              Json?                    @db.Json
   areas                                                                 areas[]
-  areas_files                                                           areas_files[]
+  areas_photos                                                          areas_photos[]
   cities                                                                cities[]
-  cities_files                                                          cities_files[]
+  cities_photos                                                         cities_photos[]
   developers                                                            developers[]
-  directus_folders                                                      directus_folders?   @relation(fields: [folder], references: [id], onUpdate: NoAction, map: "directus_files_folder_foreign")
-  directus_users_directus_files_modified_byTodirectus_users             directus_users?     @relation("directus_files_modified_byTodirectus_users", fields: [modified_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_files_modified_by_foreign")
-  directus_users_directus_files_uploaded_byTodirectus_users             directus_users?     @relation("directus_files_uploaded_byTodirectus_users", fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_files_uploaded_by_foreign")
-  directus_settings_directus_settings_project_logoTodirectus_files      directus_settings[] @relation("directus_settings_project_logoTodirectus_files")
-  directus_settings_directus_settings_public_backgroundTodirectus_files directus_settings[] @relation("directus_settings_public_backgroundTodirectus_files")
-  directus_settings_directus_settings_public_foregroundTodirectus_files directus_settings[] @relation("directus_settings_public_foregroundTodirectus_files")
+  directus_folders                                                      directus_folders?        @relation(fields: [folder], references: [id], onUpdate: NoAction, map: "directus_files_folder_foreign")
+  directus_users_directus_files_modified_byTodirectus_users             directus_users?          @relation("directus_files_modified_byTodirectus_users", fields: [modified_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_files_modified_by_foreign")
+  directus_users_directus_files_uploaded_byTodirectus_users             directus_users?          @relation("directus_files_uploaded_byTodirectus_users", fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_files_uploaded_by_foreign")
+  directus_settings_directus_settings_project_logoTodirectus_files      directus_settings[]      @relation("directus_settings_project_logoTodirectus_files")
+  directus_settings_directus_settings_public_backgroundTodirectus_files directus_settings[]      @relation("directus_settings_public_backgroundTodirectus_files")
+  directus_settings_directus_settings_public_foregroundTodirectus_files directus_settings[]      @relation("directus_settings_public_foregroundTodirectus_files")
   floor_plans                                                           floor_plans[]
   inspection_photos                                                     inspection_photos[]
   inspections                                                           inspections[]
   malls                                                                 malls[]
   projects                                                              projects[]
-  projects_files                                                        projects_files[]
+  projects_photos                                                       projects_photos[]
   properties                                                            properties[]
-  properties_files                                                      properties_files[]
-  test4_files                                                           test4_files[]
+  properties_floor_plans                                                properties_floor_plans[]
+  properties_photos                                                     properties_photos[]
+  test4_photos                                                          test4_photos[]
   towers                                                                towers[]
-  towers_files                                                          towers_files[]
+  towers_photos                                                         towers_photos[]
 }
 
 model directus_flows {
@@ -563,7 +546,6 @@ model floor_plans {
   projects         projects        @relation(fields: [project_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_floor_plans_projects")
   towers           towers?         @relation(fields: [tower_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_floor_plans_towers")
   directus_files   directus_files? @relation(fields: [image_file], references: [id], onUpdate: NoAction, map: "floor_plans_image_file_foreign")
-  properties       properties[]
 }
 
 model inspection_photos {
@@ -603,6 +585,7 @@ model languages {
   developers_translations    developers_translations[]
   payment_plans_translations payment_plans_translations[]
   projects_translations      projects_translations[]
+  properties_translations    properties_translations[]
   test_translations          test_translations[]
 }
 
@@ -780,18 +763,10 @@ model projects {
   other_projects                projects[]               @relation("projectsToprojects")
   areas                         areas?                   @relation(fields: [area_id], references: [id], onUpdate: NoAction, map: "projects_area_id_foreign")
   directus_files                directus_files?          @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "projects_photo_foreign")
-  projects_files                projects_files[]
+  projects_photos               projects_photos[]
   projects_translations         projects_translations[]
   properties                    properties[]
   towers                        towers[]
-}
-
-model projects_files {
-  id                Int             @id @default(autoincrement())
-  projects_id       Int?
-  directus_files_id String?         @db.Uuid
-  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "projects_files_directus_files_id_foreign")
-  projects          projects?       @relation(fields: [projects_id], references: [id], onUpdate: NoAction, map: "projects_files_projects_id_foreign")
 }
 
 model projects_translations {
@@ -804,42 +779,35 @@ model projects_translations {
 }
 
 model properties {
-  id                Int                @id @default(autoincrement())
-  created_at        DateTime           @default(now()) @db.Timestamp(6)
-  updated_at        DateTime           @default(now()) @db.Timestamp(6)
-  balcony_area_sqft Decimal?           @db.Decimal(15, 5)
-  floor             String?
-  has_balcony       Boolean?
-  has_parking       Boolean?
-  has_personal_pool Boolean?
-  is_penthouse      Boolean?
-  is_townhouse      Boolean?
-  parking           String?
-  parking_count     Int?
-  property_type     String?            @db.VarChar(16)
-  room_type         String?            @db.VarChar(16)
-  sea_view          String?            @db.VarChar(8)
-  unit_area_sqft    Decimal?           @db.Decimal(15, 5)
-  unit_number       String?            @db.VarChar(16)
-  unit_price_aed    Int?
-  floor_plan_id     Int?
-  tower_id          Int?
-  project_id        Int
-  status            String             @default("draft") @db.VarChar(255)
-  photo             String?            @db.Uuid
-  floor_plans       floor_plans?       @relation(fields: [floor_plan_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_properties_floor_plans")
-  projects          projects           @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_properties_projects")
-  towers            towers?            @relation(fields: [tower_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_properties_towers")
-  directus_files    directus_files?    @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "properties_photo_foreign")
-  properties_files  properties_files[]
-}
-
-model properties_files {
-  id                Int             @id @default(autoincrement())
-  properties_id     Int?
-  directus_files_id String?         @db.Uuid
-  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "properties_files_directus_files_id_foreign")
-  properties        properties?     @relation(fields: [properties_id], references: [id], onUpdate: NoAction, map: "properties_files_properties_id_foreign")
+  id                      Int                       @id @default(autoincrement())
+  created_at              DateTime                  @default(now()) @db.Timestamp(6)
+  updated_at              DateTime                  @default(now()) @db.Timestamp(6)
+  balcony_area_sqft       Decimal?                  @db.Decimal(15, 5)
+  has_balcony             Boolean?
+  has_parking             Boolean?
+  has_personal_pool       Boolean?
+  is_penthouse            Boolean?
+  is_townhouse            Boolean?
+  parking_count           Int?
+  property_type           String?                   @db.VarChar(16)
+  room_type               String?                   @db.VarChar(16)
+  sea_view                String?                   @db.VarChar(8)
+  unit_area_sqft          Decimal?                  @db.Decimal(15, 5)
+  unit_price_aed          Int?
+  tower_id                Int?
+  project_id              Int
+  status                  String                    @default("draft") @db.VarChar(255)
+  photo                   String?                   @db.Uuid
+  name                    String?                   @db.VarChar(255)
+  floor_min               Int?
+  floor_max               Int?
+  living_area_sqft        Decimal?                  @db.Decimal(15, 5)
+  projects                projects                  @relation(fields: [project_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_properties_projects")
+  towers                  towers?                   @relation(fields: [tower_id], references: [id], onUpdate: NoAction, map: "fk_properties_towers")
+  directus_files          directus_files?           @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "properties_photo_foreign")
+  properties_floor_plans  properties_floor_plans[]
+  properties_photos       properties_photos[]
+  properties_translations properties_translations[]
 }
 
 model spatial_ref_sys {
@@ -906,22 +874,13 @@ model test3 {
 }
 
 model test4 {
-  id                        Int           @id @default(autoincrement())
-  name4                     String?       @db.VarChar(255)
+  id                        Int            @id @default(autoincrement())
+  name4                     String?        @db.VarChar(255)
   test3                     Int?
   test32                    Int?
-  test3_test4_test32Totest3 test3?        @relation("test4_test32Totest3", fields: [test32], references: [id], onUpdate: NoAction, map: "test4_test32_foreign")
-  test3_test4_test3Totest3  test3?        @relation("test4_test3Totest3", fields: [test3], references: [id], onUpdate: NoAction, map: "test4_test3_foreign")
-  test4_files               test4_files[]
-}
-
-model test4_files {
-  id                Int             @id @default(autoincrement())
-  test4_id          Int?
-  directus_files_id String?         @db.Uuid
-  sort              Int?
-  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "test4_files_directus_files_id_foreign")
-  test4             test4?          @relation(fields: [test4_id], references: [id], onUpdate: NoAction, map: "test4_files_test4_id_foreign")
+  test3_test4_test32Totest3 test3?         @relation("test4_test32Totest3", fields: [test32], references: [id], onUpdate: NoAction, map: "test4_test32_foreign")
+  test3_test4_test3Totest3  test3?         @relation("test4_test3Totest3", fields: [test3], references: [id], onUpdate: NoAction, map: "test4_test3_foreign")
+  test4_photos              test4_photos[]
 }
 
 model test_translations {
@@ -947,17 +906,83 @@ model towers {
   status         String          @default("draft") @db.VarChar(255)
   sort           Int?
   photo          String?         @db.Uuid
+  slug           String          @unique(map: "towers_slug_unique") @db.VarChar(64)
   floor_plans    floor_plans[]
   properties     properties[]
   projects       projects        @relation(fields: [project_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_towers_projects")
   directus_files directus_files? @relation(fields: [photo], references: [id], onUpdate: NoAction, map: "towers_photo_foreign")
-  towers_files   towers_files[]
+  towers_photos  towers_photos[]
 }
 
-model towers_files {
-  id                Int             @id @default(autoincrement())
+model areas_photos {
+  id                Int             @id(map: "areas_files_pkey") @default(autoincrement())
+  areas_id          Int?
+  directus_files_id String?         @db.Uuid
+  sort              Int?
+  areas             areas?          @relation(fields: [areas_id], references: [id], onUpdate: NoAction, map: "areas_files_areas_id_foreign")
+  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "areas_files_directus_files_id_foreign")
+}
+
+model cities_photos {
+  id                Int             @id(map: "cities_files_pkey") @default(autoincrement())
+  cities_id         Int?
+  directus_files_id String?         @db.Uuid
+  sort              Int?
+  cities            cities?         @relation(fields: [cities_id], references: [id], onUpdate: NoAction, map: "cities_files_cities_id_foreign")
+  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "cities_files_directus_files_id_foreign")
+}
+
+model projects_photos {
+  id                Int             @id(map: "projects_files_pkey") @default(autoincrement())
+  projects_id       Int?
+  directus_files_id String?         @db.Uuid
+  sort              Int?
+  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "projects_files_directus_files_id_foreign")
+  projects          projects?       @relation(fields: [projects_id], references: [id], onUpdate: NoAction, map: "projects_files_projects_id_foreign")
+}
+
+model properties_floor_plans {
+  id                Int             @id(map: "properties_files_1_pkey") @default(autoincrement())
+  properties_id     Int?
+  directus_files_id String?         @db.Uuid
+  sort              Int?
+  description       String?         @db.VarChar(255)
+  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "properties_files_1_directus_files_id_foreign")
+  properties        properties?     @relation(fields: [properties_id], references: [id], onUpdate: NoAction, map: "properties_files_1_properties_id_foreign")
+}
+
+model properties_photos {
+  id                Int             @id(map: "properties_files_pkey") @default(autoincrement())
+  properties_id     Int?
+  directus_files_id String?         @db.Uuid
+  sort              Int?
+  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "properties_files_directus_files_id_foreign")
+  properties        properties?     @relation(fields: [properties_id], references: [id], onUpdate: NoAction, map: "properties_files_properties_id_foreign")
+}
+
+model properties_translations {
+  id             Int         @id @default(autoincrement())
+  properties_id  Int?
+  languages_code String?     @db.VarChar(255)
+  description    String?     @db.VarChar(255)
+  languages      languages?  @relation(fields: [languages_code], references: [code], onUpdate: NoAction, map: "properties_translations_languages_code_foreign")
+  properties     properties? @relation(fields: [properties_id], references: [id], onUpdate: NoAction, map: "properties_translations_properties_id_foreign")
+}
+
+model test4_photos {
+  id                Int             @id(map: "test4_files_pkey") @default(autoincrement())
+  test4_id          Int?
+  directus_files_id String?         @db.Uuid
+  sort              Int?
+  directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "test4_files_directus_files_id_foreign")
+  test4             test4?          @relation(fields: [test4_id], references: [id], onUpdate: NoAction, map: "test4_files_test4_id_foreign")
+}
+
+model towers_photos {
+  id                Int             @id(map: "towers_files_pkey") @default(autoincrement())
   towers_id         Int?
   directus_files_id String?         @db.Uuid
+  sort              Int?
   directus_files    directus_files? @relation(fields: [directus_files_id], references: [id], onUpdate: NoAction, map: "towers_files_directus_files_id_foreign")
   towers            towers?         @relation(fields: [towers_id], references: [id], onUpdate: NoAction, map: "towers_files_towers_id_foreign")
 }

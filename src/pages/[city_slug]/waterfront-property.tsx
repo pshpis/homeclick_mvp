@@ -80,7 +80,8 @@ export async function getStaticProps(context: any) {
                         }
                     }
                 }
-            }
+            },
+            properties_translations: true,
         }
     });
     properties = strToFloat(JSON.parse(JSON.stringify(properties)));

@@ -8,7 +8,7 @@ import {PropertyInfoCard} from "@/components/PropertyInfoCard/PropertyInfoCard";
 export default function Home({property, locale}: { property: any, locale: string }) {
     const text: PropertyInfoCardText = propertyInfoCardTextChoice[locale as keyof TextChoice<PropertyInfoCardText>]
     return <Center pt="20px">
-        <PropertyInfoCard property={property} text={text}/>
+        <PropertyInfoCard property={property} text={text} locale={locale}/>
     </Center>
 }
 
@@ -29,7 +29,7 @@ export async function getStaticPaths(context: any) {
                     },
                     projects_translations: true
                 }
-            }
+            },
         }
     });
 
@@ -74,7 +74,8 @@ export async function getStaticProps(context: any) {
                     },
                     projects_translations: true
                 }
-            }
+            },
+            properties_translations: true,
         }
     });
 

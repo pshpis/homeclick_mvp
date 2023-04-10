@@ -73,6 +73,7 @@ export async function getStaticProps(context: any) {
                 include: {
                     towers: true,
                     projects: true,
+                    properties_translations: true,
                 }
             }
         }

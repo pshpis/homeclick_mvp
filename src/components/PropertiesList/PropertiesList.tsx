@@ -10,14 +10,17 @@ function PropertyCard({
                           city_slug
                       }: { property: any, locale: string, text: PropertiesListText, city_slug: string }) {
     const slug = `${property.property_type}-in-${property.projects.slug}-${property.id}`;
+    const translation = property.properties_translations.filter((t: any) => {
+        return t.languages_code == locale;
+    })[0];
     return <Card>
         <CardHeader>
-            <Heading size='md'>{text.property} #{property.id}</Heading>
+            <Heading size='md'>{text.property} {property.name}</Heading>
         </CardHeader>
         <CardBody>
             <Text>
-                {text.floor} {property.floor} <br/>
-                {text.roomType} {property.room_type} <br/>
+                {translation.description} <br/>
+                {text.roomType} {property.room_type + 'br'}<br/>
             </Text>
         </CardBody>
         <Divider/>

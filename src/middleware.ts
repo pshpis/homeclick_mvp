@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
         return;
     }
 
-    console.log(req);
+    // console.log(req);
 
     if (req.nextUrl.locale === 'en') {
 
