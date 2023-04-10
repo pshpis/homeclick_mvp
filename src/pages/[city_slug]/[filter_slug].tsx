@@ -46,9 +46,7 @@ export async function getStaticPaths(context: any) {
     const needPaths: Array<any> = [];
     context.locales.forEach((l: string) => {
         _cities.forEach((city) => {
-            // console.log(city);
             const properties = getPropertiesFromCity(city);
-            console.log(properties);
             properties.forEach((property: any) => {
                 const filter_slug =
                     `${property.room_type}-${property.property_type}s-for-sale-in-${property.projects.areas.slug}`;
@@ -59,7 +57,6 @@ export async function getStaticPaths(context: any) {
                         filter_slug: filter_slug,
                     }
                 });
-                console.log(filter_slug);
             });
         });
     });
